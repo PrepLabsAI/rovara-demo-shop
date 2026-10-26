@@ -27,3 +27,5 @@ Frontend work belongs in `web/`, backend work in `api/`; contracts are repeated
 in the client to keep these independently editable in this small fixture.
 TODO generate client types if the API grows. Cart contents are in memory only.
 MIT licensed.
+
+CI verification: documentation-only check.
