@@ -1,0 +1,12 @@
+:root { font-family: system-ui, sans-serif; color: #23372c; background: #f6f4ed; }
+body { margin: 0; }
+main { max-width: 960px; padding: 3rem 1.5rem; margin: auto; }
+header { border-bottom: 2px solid #42644c; margin-bottom: 2rem; }
+h1 { font-family: Georgia, serif; font-size: 3rem; }
+section[aria-label=Products] { display: grid; grid-template-columns: repeat(auto-fit,minmax(200px,1fr)); gap: 1rem; }
+article { background: white; padding: 1.5rem; border: 1px solid #ccd5c9; border-radius: 8px; }
+button { background: #294b36; color: white; padding: .6rem .9rem; border: 0; border-radius: 4px; cursor: pointer; }
+button:disabled { opacity: .5; cursor: default; }
+button:focus-visible { outline: 3px solid #a87325; outline-offset: 3px; }
+li { margin: 1rem 0; } li button { margin-left: 1rem; }
+dd { margin-bottom: .6rem; } [role=alert] { color: #922b26; }
