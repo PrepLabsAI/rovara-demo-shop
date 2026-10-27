@@ -32,6 +32,17 @@ describe("catalog and checkout", () => {
       }).status,
     ).toBe(400);
   });
+  it("filters products by category query param", () => {
+    const sp = (s: string) => new URLSearchParams(s);
+    const body = (s: string) =>
+      handle("GET", "/api/products", undefined, sp(s)).body as unknown[];
+
+    expect(body("category=stationery")).toHaveLength(2);
+    expect(body("category=home")).toHaveLength(1);
+    expect(body("category=unknown")).toHaveLength(0);
+    // no param — existing behaviour
+    expect(handle("GET", "/api/products").body).toHaveLength(3);
+  });
   it("rejects malformed cart, unknown products and invalid rates", () => {
     for (const body of [
       undefined,

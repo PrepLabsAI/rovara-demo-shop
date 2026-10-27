@@ -9,6 +9,7 @@ import {
 import { checkout, fetchProducts, type Product, type Totals } from "./client";
 export function App() {
   const [products, setProducts] = useState<Product[]>([]);
+  const [activeCategory, setActiveCategory] = useState<string | null>(null);
   const [lines, setLines] = useState<CartLine[]>([]);
   const [totals, setTotals] = useState<Totals | null>(null);
   const [error, setError] = useState("");
@@ -35,6 +36,10 @@ export function App() {
     setTotals(null);
     setError("");
   }
+  const categories = [...new Set(products.map((p) => p.category))];
+  const visible = activeCategory
+    ? products.filter((p) => p.category === activeCategory)
+    : products;
   async function calculate() {
     setBusy(true);
     setError("");
@@ -54,8 +59,25 @@ export function App() {
       </header>
       {loading && <p role="status">Loading products…</p>}
       {error && <p role="alert">{error}</p>}
+      <nav aria-label="Category filter">
+        <button
+          onClick={() => setActiveCategory(null)}
+          aria-pressed={activeCategory === null}
+        >
+          All
+        </button>
+        {categories.map((c) => (
+          <button
+            key={c}
+            onClick={() => setActiveCategory(c)}
+            aria-pressed={activeCategory === c}
+          >
+            {c}
+          </button>
+        ))}
+      </nav>
       <section aria-label="Products">
-        {products.map((p) => (
+        {visible.map((p) => (
           <article key={p.id}>
             <h2>{p.name}</h2>
             <p>{p.category}</p>
