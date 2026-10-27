@@ -1,4 +1,6 @@
 import { describe, expect, it } from "vitest";
+// Note: the no-param / all-3-products case is already covered by the
+// existing 'serves catalog and rejects unknown routes' test; it is not repeated.
 import { handle } from "../api/handler";
 import { calculateTotals } from "../api/totals";
 import { findProduct } from "../api/catalog";
@@ -48,5 +50,42 @@ describe("catalog and checkout", () => {
         Array.from({ length: 101 }, () => ({ productId: "mug", quantity: 1 })),
       ),
     ).toThrow("large");
+  });
+});
+
+describe("GET /api/products category filter", () => {
+  function qs(s: string) {
+    return new URLSearchParams(s);
+  }
+
+  it("known category stationery returns 2 items", () => {
+    const r = handle("GET", "/api/products", undefined, qs("category=stationery"));
+    expect(r.status).toBe(200);
+    const body = r.body as { category: string }[];
+    expect(body).toHaveLength(2);
+    expect(body.every((p) => p.category === "stationery")).toBe(true);
+  });
+
+  it("known category home returns 1 item", () => {
+    const r = handle("GET", "/api/products", undefined, qs("category=home"));
+    expect((r.body as unknown[]).length).toBe(1);
+  });
+
+  it("unknown category returns empty list with 200", () => {
+    const r = handle("GET", "/api/products", undefined, qs("category=food"));
+    expect(r.status).toBe(200);
+    expect(r.body).toEqual([]);
+  });
+
+  it("empty string category returns empty list", () => {
+    const r = handle("GET", "/api/products", undefined, qs("category="));
+    expect(r.status).toBe(200);
+    expect(r.body).toEqual([]);
+  });
+
+  it("padded category ' stationery' returns empty list", () => {
+    // URLSearchParams decodes '+' as a space, exercising the no-trim rule.
+    const r = handle("GET", "/api/products", undefined, qs("category=+stationery"));
+    expect(r.body).toEqual([]);
   });
 });
