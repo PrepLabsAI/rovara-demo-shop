@@ -14,6 +14,7 @@ export function App() {
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(true);
   const [busy, setBusy] = useState(false);
+  const [selectedCategory, setSelectedCategory] = useState("");
   useEffect(() => {
     let cancelled = false;
     fetchProducts()
@@ -54,8 +55,26 @@ export function App() {
       </header>
       {loading && <p role="status">Loading products…</p>}
       {error && <p role="alert">{error}</p>}
+      <label htmlFor="category-filter">Filter by category</label>
+      <select
+        id="category-filter"
+        value={selectedCategory}
+        onChange={(e) => setSelectedCategory(e.target.value)}
+      >
+        <option value="">All</option>
+        {Array.from(new Set(products.map((p) => p.category)))
+          .sort()
+          .map((c) => (
+            <option key={c} value={c}>
+              {c}
+            </option>
+          ))}
+      </select>
       <section aria-label="Products">
-        {products.map((p) => (
+        {(selectedCategory
+          ? products.filter((p) => p.category === selectedCategory)
+          : products
+        ).map((p) => (
           <article key={p.id}>
             <h2>{p.name}</h2>
             <p>{p.category}</p>
