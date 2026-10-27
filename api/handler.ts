@@ -8,9 +8,13 @@ export function handle(
   method: string,
   path: string,
   body?: unknown,
+  query?: URLSearchParams,
 ): ApiResponse {
-  if (method === "GET" && path === "/api/products")
-    return { status: 200, body: products };
+  if (method === "GET" && path === "/api/products") {
+    const cat = query?.get("category") ?? null;
+    const result = cat ? products.filter((p) => p.category === cat) : products;
+    return { status: 200, body: result };
+  }
   if (method === "POST" && path === "/api/checkout") {
     try {
       if (

@@ -100,6 +100,23 @@ it("shows checkout errors and re-enables the button", async () => {
     ).toBeEnabled(),
   );
 });
+it("filters products by category", async () => {
+  const multi = [
+    { id: "notebook", name: "Field notebook", priceCents: 1200, category: "stationery" },
+    { id: "mug",      name: "Studio mug",     priceCents: 1800, category: "home" },
+  ];
+  vi.stubGlobal("fetch",
+    vi.fn().mockResolvedValue({ ok: true, json: async () => multi }));
+  render(<App />);
+  await screen.findByRole("button", { name: "Add Field notebook" });
+
+  fireEvent.click(screen.getByRole("button", { name: "home" }));
+  expect(screen.queryByText("Field notebook")).not.toBeInTheDocument();
+  expect(screen.getByText("Studio mug")).toBeInTheDocument();
+
+  fireEvent.click(screen.getByRole("button", { name: "All" }));
+  expect(screen.getByText("Field notebook")).toBeInTheDocument();
+});
 it("client posts cart lines and surfaces errors", async () => {
   const fetcher = vi
     .fn()
